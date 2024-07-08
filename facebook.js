@@ -4,6 +4,7 @@ const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const mongoose = require("mongoose");
 const FacebookUser = require("./models/facebookUserSchema"); // Assuming this is where your model is defined
+require("dotenv").config();
 
 // Connect to MongoDB (replace with your actual MongoDB URI)
 mongoose.connect("mongodb+srv://subhan:admin123@store.cg89rrm.mongodb.net", {
@@ -17,9 +18,9 @@ mongoose.connection.once("open", () => console.log("Connected to database"));
 passport.use(
   new FacebookStrategy(
     {
-      clientID: "7817098028369740",
+      clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: "6fadb9e89d68e5ad5d105124d7daa25d",
-      callbackURL: "http://localhost:5000/auth/facebook/callback",
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
       profileFields: ["id", "displayName", "email", "picture.type(large)"], // Specify the profile fields you want to retrieve
     },
     async (accessToken, refreshToken, profile, done) => {

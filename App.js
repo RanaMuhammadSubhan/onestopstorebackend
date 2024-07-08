@@ -15,9 +15,9 @@ app.use(express.json());
 passport.use(
   new FacebookStrategy(
     {
-      clientID: "7817098028369740",
-      clientSecret: "6fadb9e89d68e5ad5d105124d7daa25d",
-      callbackURL: "http://localhost:5000/auth/facebook/callback",
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
       profileFields: ["id", "displayName", "email", "picture.type(large)"], // Specify the profile fields you want to retrieve
     },
     async (accessToken, refreshToken, profile, done) => {

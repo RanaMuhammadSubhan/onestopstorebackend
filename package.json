@@ -2,9 +2,9 @@
   "name": "services",
   "version": "1.0.0",
   "description": "",
-  "main": "Server.js",
+  "main": "App.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "dev": "nodemon app.js"
   },
   "author": "",
