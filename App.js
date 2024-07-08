@@ -11,12 +11,10 @@ dotenv.config();
 connectDB();
 const app = express();
 
-app.use(
-  cors({
-    origin: ["https://onestopstore1.netlify.app"], // allow requests from this domain
-    credentials: true, // allow credentials (e.g., cookies) to be sent
-  })
-);
+const corsOptions = {
+  origin: "https://onestopstore1.netlify.app/",
+  credentials: true,
+};
 
 app.use(cors(corsOptions));
 app.use(express.json());
