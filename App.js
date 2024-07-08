@@ -68,7 +68,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-const authRoutes = require("./facebookroute");
+const authRoutes = require("./routes/facebookroute");
 app.use("/auth", authRoutes); // Assuming your routes are defined in authRoutes.js
 
 app.use("/api/users", userRoutes);
