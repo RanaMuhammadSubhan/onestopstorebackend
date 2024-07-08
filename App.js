@@ -10,25 +10,15 @@ const FacebookUser = require("./models/facebookUserSchema"); // Assuming this is
 dotenv.config();
 connectDB();
 const app = express();
-app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://onestopstore1.netlify.app"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+
 app.use(
   cors({
     origin: ["https://onestopstore1.netlify.app"], // allow requests from this domain
     credentials: true, // allow credentials (e.g., cookies) to be sent
-    methods: ["GET", "POST", "PUT", "DELETE"], // allow these methods
-    headers: ["Content-Type", "Authorization"], // allow these headers
   })
 );
+
+app.use(cors(corsOptions));
 app.use(express.json());
 passport.use(
   new FacebookStrategy(
@@ -74,6 +64,17 @@ passport.deserializeUser(async (id, done) => {
   } catch (err) {
     done(err);
   }
+});
+app.use((req, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://onestopstore1.netlify.app"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
 });
 app.use(
   session({
