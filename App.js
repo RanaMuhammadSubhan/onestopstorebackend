@@ -10,7 +10,14 @@ const FacebookUser = require("./models/facebookUserSchema"); // Assuming this is
 dotenv.config();
 connectDB();
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://onestopstorebackend-k2baub1a6-rana-muhammad-subhans-projects.vercel.app/", // Replace with your Netlify frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 passport.use(
   new FacebookStrategy(
