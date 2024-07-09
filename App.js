@@ -2,42 +2,46 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./Config/db");
 const userRoutes = require("./routes/userRoutes");
-const cors = require("cors"); // Import CORS middleware
+const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
-const FacebookUser = require("./models/facebookUserSchema"); // Assuming this is where your model is defined
+const FacebookUser = require("./models/facebookUserSchema");
+
 dotenv.config();
 connectDB();
+
 const app = express();
 
+// CORS Options
 const corsOptions = {
-  origin: "*", // Use * to allow all origins
-  optionsSuccessStatus: 200,
+  origin: "https://onestopstore1.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // If you need to include cookies or authentication tokens
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
-app.use(express.json());
-const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, console.log(`Server running on port ${PORT}`));
+// Apply JSON middleware
+app.use(express.json());
+
+// Passport configuration and routes
 passport.use(
   new FacebookStrategy(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-      profileFields: ["id", "displayName", "email", "picture.type(large)"], // Specify the profile fields you want to retrieve
+      profileFields: ["id", "displayName", "email", "picture.type(large)"],
     },
     async (accessToken, refreshToken, profile, done) => {
-      // Check if the user already exists in your database
       try {
         let user = await FacebookUser.findOne({ facebookId: profile.id });
-
         if (user) {
           return done(null, user);
         } else {
-          // Create a new user if not exists
           const newUser = new FacebookUser({
             facebookId: profile.id,
             name: profile.displayName,
@@ -66,20 +70,10 @@ passport.deserializeUser(async (id, done) => {
     done(err);
   }
 });
-// app.use((req, res, next) => {
-//   res.header(
-//     "Access-Control-Allow-Origin",
-//     "https://onestopstore1.netlify.app"
-//   );
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
+
 app.use(
   session({
-    secret: "your_session_secret", // Replace with a random string for session encryption
+    secret: "your_session_secret",
     resave: false,
     saveUninitialized: false,
   })
@@ -89,27 +83,15 @@ app.use(passport.session());
 
 // Routes
 const authRoutes = require("./routes/facebookroute");
-app.use("/auth", authRoutes); // Assuming your routes are defined in authRoutes.js
-
+app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.get("/api/test", (req, res) => {
   res.send("API is working");
 });
-module.exports = (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+const PORT = process.env.PORT || 5000;
 
-  // Your logic here
-  res.status(200).json({ message: "Hello from Vercel" });
-};
+app.listen(PORT, console.log(`Server running on port ${PORT}`));
 // app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 // app.use(passport.initialize());
 // app.use(passport.session());
