@@ -106,6 +106,27 @@ app.use(passport.session());
 
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
+
+app.post("/login", async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email } || { name });
+
+  if (user && (await user.matchPassword(password))) {
+    return res.json({
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      age: user.age,
+      gender: user.gender,
+      profilePicture: user.profilePicture,
+      token: generateToken(user._id),
+      message: "Logged in successfully",
+    });
+  } else {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }
+});
 app.get("/api/test", (req, res) => {
   res.send("API is working");
 });
