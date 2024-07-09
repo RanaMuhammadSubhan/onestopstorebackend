@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./Config/db");
 const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/facebookroute");
+
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
@@ -29,6 +31,23 @@ app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
+// Handle Vercel deployment
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // Your logic here
+
+  next();
+});
 // Passport configuration and routes
 passport.use(
   new FacebookStrategy(
@@ -85,31 +104,17 @@ app.use(passport.session());
 
 // Routes
 
-// Handle Vercel deployment
-module.exports = (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  const authRoutes = require("./routes/facebookroute");
-  app.use("/auth", authRoutes);
-  app.use("/api/users", userRoutes);
-  app.get("/api/test", (req, res) => {
-    res.send("API is working");
-  });
-  // Your logic here
-  res.status(200).json({ message: "Hello from Vercel" });
-};
-
+app.use("/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.get("/api/test", (req, res) => {
+  res.send("API is working");
+});
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found" });
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 // app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 // app.use(passport.initialize());
 // app.use(passport.session());
