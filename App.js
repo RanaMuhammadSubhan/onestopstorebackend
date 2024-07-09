@@ -12,10 +12,9 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: "*",
-  optionsSuccessStatus: 200,
+  origin: "https://onestopstore1.netlify.app",
+  credentials: true,
 };
-
 app.use(cors(corsOptions));
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
@@ -66,17 +65,17 @@ passport.deserializeUser(async (id, done) => {
     done(err);
   }
 });
-app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://onestopstore1.netlify.app"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header(
+//     "Access-Control-Allow-Origin",
+//     "https://onestopstore1.netlify.app"
+//   );
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
 app.use(
   session({
     secret: "your_session_secret", // Replace with a random string for session encryption

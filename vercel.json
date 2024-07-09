@@ -1,19 +1,42 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "./App.js", 
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/App.js",
-        "methods":["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
-        "headers": {
-         "Acess-Control-Allow-Origin":"*"
+  "version": 2,
+  "builds": [
+    {
+      "src": "App.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/App.js"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://onestopstore1.netlify.app"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, Set-Cookie"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "Authorization, Set-Cookie"
         }
-      }
-    ]
-  }
+      ]
+    }
+  ]
+}
