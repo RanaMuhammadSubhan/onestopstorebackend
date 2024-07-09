@@ -10,10 +10,7 @@ const upload = require("../Config/cloudinary"); // Assuming this is the path to 
 const router = express.Router();
 
 router.post("/register", registerUser);
-router.post("/login", loginUser, (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*"); // Ensure this header is set
-  res.json({ message: "Login endpoint" });
-});
+router.post("/login", loginUser);
 router.put(
   "/profile",
   authenticateUser,

@@ -15,16 +15,18 @@ const app = express();
 
 // CORS Options
 const corsOptions = {
-  origin: "https://onestopstore1.netlify.app",
+  origin: "https://onestopstore1.netlify.app", // Specify your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // If you need to include cookies or authentication tokens
+  credentials: true // If you need to include cookies or authentication tokens
 };
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Apply JSON middleware
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 
 // Passport configuration and routes
@@ -34,7 +36,7 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-      profileFields: ["id", "displayName", "email", "picture.type(large)"],
+      profileFields: ["id", "displayName", "email", "picture.type(large)"]
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -46,7 +48,7 @@ passport.use(
             facebookId: profile.id,
             name: profile.displayName,
             email: profile.emails ? profile.emails[0].value : null,
-            profilePicture: profile.photos ? profile.photos[0].value : null,
+            profilePicture: profile.photos ? profile.photos[0].value : null
           });
           await newUser.save();
           return done(null, newUser);
@@ -75,7 +77,7 @@ app.use(
   session({
     secret: "your_session_secret",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false
   })
 );
 app.use(passport.initialize());
@@ -89,9 +91,25 @@ app.get("/api/test", (req, res) => {
   res.send("API is working");
 });
 
-const PORT = process.env.PORT || 5000;
+// Handle Vercel deployment
+module.exports = (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-app.listen(PORT, console.log(`Server running on port ${PORT}`));
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // Your logic here
+  res.status(200).json({ message: "Hello from Vercel" });
+};
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 // app.use(passport.initialize());
 // app.use(passport.session());
