@@ -12,8 +12,8 @@ router.get(
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", {
-    successRedirect: "http://localhost:5173/", // Redirect to profile page on frontend
-    failureRedirect: "http://localhost:5173/login", // Redirect to login page on frontend
+    successRedirect: "https://onestopstore1.netlify.app", // Redirect to profile page on frontend
+    failureRedirect: "https://onestopstore1.netlify.app/login", // Redirect to login page on frontend
   })
 );
 
