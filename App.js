@@ -12,9 +12,10 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: "https://onestopstore1.netlify.app",
-  credentials: true,
+  origin: "*", // Use * to allow all origins
+  optionsSuccessStatus: 200,
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
