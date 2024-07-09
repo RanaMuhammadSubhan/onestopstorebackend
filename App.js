@@ -12,12 +12,15 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: "https://onestopstore1.netlify.app/",
-  credentials: true,
+  origin: "*",
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, console.log(`Server running on port ${PORT}`));
 passport.use(
   new FacebookStrategy(
     {
@@ -92,9 +95,6 @@ app.use("/api/users", userRoutes);
 app.get("/api/test", (req, res) => {
   res.send("API is working");
 });
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, console.log(`Server running on port ${PORT}`));
 
 // app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 // app.use(passport.initialize());
