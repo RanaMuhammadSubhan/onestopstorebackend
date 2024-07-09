@@ -95,7 +95,21 @@ app.use("/api/users", userRoutes);
 app.get("/api/test", (req, res) => {
   res.send("API is working");
 });
+module.exports = (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // Your logic here
+  res.status(200).json({ message: "Hello from Vercel" });
+};
 // app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 // app.use(passport.initialize());
 // app.use(passport.session());
